@@ -59,6 +59,7 @@ extern "C" {
                                                     // thread looking for
                                                     // handles to close
 
+
 // FSI IPC getlock constants
 #define FSI_IPC_GETLOCK_PTYPE                  2
 #define FSI_IPC_GETLOCK_PPID                   0
@@ -143,8 +144,6 @@ compile_time_check_func(const char * fmt, ...)
 }
 #define CCL_CLOSE_STYLE_NORMAL             0
 #define CCL_CLOSE_STYLE_FIRE_AND_FORGET    1
-#define CCL_CLOSE_STYLE_NO_INDEX           2
-
 #define FSAL_MAX_PATH_LEN PATH_MAX
 
 extern int       g_shm_id;              // SHM ID
@@ -859,7 +858,7 @@ int ccl_fsal_try_fastopen_by_index(ccl_context_t       * handle,
                                    char                * fsal_name);
 int ccl_find_oldest_handle();
 bool ccl_can_close_handle(int handle_index,
-			  int timeout);
+                          int timeout);
 
 // ---------------------------------------------------------------------------
 // CCL Up Call ptorotypes - both the Samba VFS layer and the Ganesha PTFSAL
@@ -886,6 +885,12 @@ extern pthread_mutex_t g_statistics_mutex;
 extern pthread_mutex_t g_close_mutex;
 // Global I/O mutex
 extern pthread_mutex_t g_io_mutex;
+// Per stream fsync and ftrunc mutex
+// used to control concurrent i/o on stream during
+// fsync or ftrunc
+extern pthread_mutex_t fsal_handle_mutex[FSI_MAX_STREAMS +
+                                         FSI_CIFS_RESERVED_STREAMS];
+
 #endif // ifndef __FSI_IPC_CCL_H__
 
 #ifdef __cplusplus
